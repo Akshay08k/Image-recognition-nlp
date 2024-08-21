@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Recognition Chatbot</title>
+    <link rel="stylesheet" href="/static/styles.css"> 
+    <style>
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+    <h2>Upload an Image</h2>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="file-input" name="file"><br><br>
+        <input type="submit" value="Upload Image">
+    </form>
+
+    <div id="result">
+        <h3>Recognition Result:</h3>
+        <p id="description"></p>
+    </div>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            const formData = new FormData();
+            const fileField = document.getElementById('file-input');
+
+            if (fileField.files.length === 0) {
+                alert("Please select a file to upload.");
+                return;
+            }
+
+            formData.append('file', fileField.files[0]);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Show the result div and display the description
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('description').innerText = data.description;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while uploading the file.');
+            });
+        });
+    </script>
+</body>
+</html>
